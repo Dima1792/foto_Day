@@ -1,0 +1,59 @@
+services:
+  nginx-app-agtu:
+    container_name: nginx-app-agtu
+    build: ./nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./src:/var/www/
+      - ./logs/nginx:/var/log/nginx
+    links:
+      - app-php-agtu
+    depends_on:
+      - app-php-agtu
+    networks:
+      - app-network
+
+
+  app-php-agtu:
+    build: .
+    container_name: app-php-agtu
+    working_dir: /var/www/
+    volumes:
+      - ./src:/var/www
+      - ./php.ini:/usr/local/etc/php/conf.d/php.ini
+      - ./cacert.pem:/usr/local/etc/php/cacert.pem
+    networks:
+      - app-network
+
+    # MySQL container
+  db-agtu:
+    image: mariadb
+    container_name: db-agtu
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: db_c2p
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 1234
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./dbdata:/var/lib/mysql/
+      - ./my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+      driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
