@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PDF с QR-кодом</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; text-align: center; }
-        .qr-section { margin-top: 50px; }
+        body { font-family: 'DejaVu Sans', sans-serif; }
+        .qr-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .qr-table td {
+            width: 33.3%;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #eee; /* Опционально: рамки для кодов */
+        }
+        .label {
+            font-size: 10px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-<h1>Ваш QR-код</h1>
+<h2 style="text-align: center;">Лист QR-кодов (12 шт.)</h2>
 
-<div class="qr-section">
-    <!-- Вставка сгенерированной Base64 строки -->
-    <img src="{{ $qrCode }}" alt="QR Code" width="150">
-</div>
-
-<p>Отсканируйте код для получения информации.</p>
+<table class="qr-table">
+    @foreach(array_chunk($qrCodes, 3) as $row) {{-- Делим массив по 3 штуки в ряд --}}
+    <tr>
+        @foreach($row as $index => $qr)
+            <td>
+                <img src="{{ $qr }}" width="120">
+                <div class="label">Код №{{ $loop->parent->index * 3 + $loop->iteration }}</div>
+            </td>
+        @endforeach
+    </tr>
+    @endforeach
+</table>
 </body>
 </html>

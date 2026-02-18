@@ -1,36 +1,38 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\RoundBlockSize;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
-use Illuminate\Http\Request;
 
 class GetPDFController extends Controller
 {
     public function generatePDF()
     {
-        $builder = new Builder(
-            writer: new PngWriter(),
-            writerOptions: [],
-            validateResult: false,
-            data: 'https://example.com',
-            encoding: new Encoding('UTF-8'),
-            errorCorrectionLevel: ErrorCorrectionLevel::High,
-            size: 200,
-            margin: 10,
-        );
+        $qrCodes = [];
 
-        $result = $builder->build();
+        // Генерируем 12 разных QR-кодов
+        for ($i = 1; $i <= 100; $i++) {
+            $builder = new Builder(
+                writer: new PngWriter(),
+                data: "Item ID: " . $i, // Здесь ваши данные
+                encoding: new Encoding('UTF-8'),
+                errorCorrectionLevel: ErrorCorrectionLevel::Medium,
+                size: 50,
+                margin: 5,
+                roundBlockSizeMode: RoundBlockSizeMode::Margin
+            );
 
-        // Получаем Data URI для вставки в <img> в шаблоне Blade
-        $qrCodeBase64 = $result->getDataUri();
-        // 3. Передача данных в PDF
-        $pdf = Pdf::loadView('GetPDF', ['qrCode' => $qrCodeBase64]);
+            // Сохраняем Data URI в массив
+            $qrCodes[] = $builder->build()->getDataUri();
+        }
+        $pdf = Pdf::loadView('GetPDF', compact('qrCodes'));
 
-        return $pdf->download('document_with_qr.pdf');
+        return $pdf->stream('12_qrcodes.pdf');
     }
 }
+

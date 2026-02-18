@@ -10,9 +10,15 @@ Route::get('/', function () {
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
+
 Route::get('/get-PDF', [ GetPDFController::class, 'generatePDF']);
-Route::get('dashboard', function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('/generate-pdf', [GetPDFController::class, 'generatePDF'])
+        ->middleware('throttle:1,2');
+});
+Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__.'/settings.php';
+
