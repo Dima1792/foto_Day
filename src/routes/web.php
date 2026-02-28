@@ -14,7 +14,7 @@ Route::get('/', function () {
 Route::get('/get-PDF', [ GetPDFController::class, 'generatePDF']);
 Route::middleware(['auth'])->group(function () {
     Route::get('/generate-pdf', [GetPDFController::class, 'generatePDF'])
-        ->middleware('throttle:1,2');
+        ->middleware('throttle:5,2');
 });
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

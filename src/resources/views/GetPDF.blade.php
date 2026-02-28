@@ -26,10 +26,10 @@
 <table class="qr-table">
     @foreach(array_chunk($qrCodes, 3) as $row) {{-- Делим массив по 3 штуки в ряд --}}
     <tr>
-        @foreach($row as $index => $qr)
+        @foreach($row as $qr)
             <td>
-                <img src="{{ $qr }}" width="120">
-                <div class="label">Код №{{ $loop->parent->index * 3 + $loop->iteration }}</div>
+                <img src="{{ $qr->qr }}" width="120">
+                <div class="label">Код №{{ $qr->id }}</div>
             </td>
         @endforeach
     </tr>
