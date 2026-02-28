@@ -19,6 +19,6 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::middleware('throttle:user-api')->get('/getQR', [GetPDFController::class, 'GetQRforLimite']);
 require __DIR__.'/settings.php';
 
