@@ -228,3 +228,17 @@
 2026/02/18 16:57:58 [notice] 1#1: start worker process 34
 2026/02/18 16:57:58 [notice] 1#1: start worker process 35
 2026/02/18 16:57:58 [notice] 1#1: start worker process 36
+2026/03/02 17:12:10 [notice] 1#1: using the "epoll" event method
+2026/03/02 17:12:10 [notice] 1#1: nginx/1.29.5
+2026/03/02 17:12:10 [notice] 1#1: built by gcc 14.2.0 (Debian 14.2.0-19) 
+2026/03/02 17:12:10 [notice] 1#1: OS: Linux 5.15.146.1-microsoft-standard-WSL2
+2026/03/02 17:12:10 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2026/03/02 17:12:10 [notice] 1#1: start worker processes
+2026/03/02 17:12:10 [notice] 1#1: start worker process 28
+2026/03/02 17:12:10 [notice] 1#1: start worker process 29
+2026/03/02 17:12:10 [notice] 1#1: start worker process 30
+2026/03/02 17:12:10 [notice] 1#1: start worker process 31
+2026/03/02 17:12:10 [notice] 1#1: start worker process 32
+2026/03/02 17:12:10 [notice] 1#1: start worker process 33
+2026/03/02 17:12:10 [notice] 1#1: start worker process 34
+2026/03/02 17:12:10 [notice] 1#1: start worker process 35

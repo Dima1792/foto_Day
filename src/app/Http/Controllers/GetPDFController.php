@@ -2,28 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\QRServis;
+use App\Services\PDFService;
+use App\Services\QRService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
+use Endroid\QrCode\Exception\ValidationException;
 
 class GetPDFController extends Controller
 {
-    public function generatePDF(QRServis $QRServis)
+    public function generatePDF(QRService $QRServis)
     {
-        $qrCodes = $QRServis->MultiGenarateQR(10,'google.com');
+        $qrCodes = $QRServis->multiGenerateQR(10,'google.com');
 
         $pdf = Pdf::loadView('GetPDF', compact('qrCodes'));
 
         return $pdf->stream('12_qrcodes.pdf');
     }
 
-    public function GetQRforLimite(Request $request, QRServis $QRServis)
+    public function GetQRforLimite(Request $request, QRService $QRService, PDFService $PDFService)
     {
-        $key = 'controller-access:' . ($request->user()?->id ?: $request->ip());
+        $key = 'controller-access:3' . ($request->user()?->id ?: $request->ip());
 
-        // Проверяем, не превышен ли лимит (например, 5 запросов в минуту)
-        if (RateLimiter::tooManyAttempts($key, $maxAttempts = 5)) {
+        if (RateLimiter::tooManyAttempts($key,2)) {
             $seconds = RateLimiter::availableIn($key);
 
             return response()->json([
@@ -31,14 +33,24 @@ class GetPDFController extends Controller
             ], 429);
         }
 
+        RateLimiter::hit($key, 60);
 
-        RateLimiter::hit($key, 120);
+        $urls =[];
+        $urls[0] = 'google.com';
+        $urls[1] = 'yandex.ru';
+//        try {
+//            $qrCodes = $QRService->multiGenerateQR();
+//        }
+//       catch (ValidationException $exception){
+//            Log::error($exception->getMessage());
+//       }
+//       catch (\Exception $exception){
+//            Log::error($exception->getMessage());
+//       }
 
-        $qrCodes = $QRServis->MultiGenarateQR(10,'google.com');
 
-        $pdf = Pdf::loadView('GetPDF', compact('qrCodes'));
 
-        return $pdf->stream('12_qrcodes.pdf');
+        return $PDFService->getQrPDF($urls)->stream('12_qrcodes.pdf');
     }
 
 }
