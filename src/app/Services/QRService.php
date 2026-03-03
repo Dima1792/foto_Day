@@ -9,6 +9,7 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Exception\ValidationException;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
+use App\Exceptions\UrlAiException;
 
 class QRService
 {
@@ -43,6 +44,9 @@ class QRService
     {
         $arrayReturn = [];
         foreach ($urls as $index => $url) {
+            if (str_ends_with(strtolower($url), '.ai')) {
+                throw new UrlAiException($url);
+            }
             $arrayReturn[$index] = $this->getItemDTO(
                 $this->generateQR($this->generateQR($url)),
                 ("Запись №" . $index)
