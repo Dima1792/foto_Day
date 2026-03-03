@@ -12,6 +12,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/get-PDF', [ GetPDFController::class, 'generatePDF']);
+Route::get('/input-urls', function () { return view('inputArrayUrl',[]); });
 Route::middleware(['auth'])->group(function () {
     Route::get('/generate-pdf', [GetPDFController::class, 'generatePDF'])
         ->middleware('throttle:5,2');
@@ -19,6 +20,6 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-Route::middleware('throttle:user-api')->get('/getQR', [GetPDFController::class, 'GetQRforLimite']);
+Route::middleware('throttle:user-api')->post('/getQR', [GetPDFController::class, 'GetQRforLimite','urls'])->name('getQR');
 require __DIR__.'/settings.php';
 

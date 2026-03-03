@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\LimiterService;
 use App\Services\PDFService;
 use App\Services\QRService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -21,35 +22,12 @@ class GetPDFController extends Controller
         return $pdf->stream('12_qrcodes.pdf');
     }
 
-    public function GetQRforLimite(Request $request, QRService $QRService, PDFService $PDFService)
+    public function GetQRforLimite(Request $request,  PDFService $PDFService, LimiterService $limiterService)
     {
         $key = 'controller-access:3' . ($request->user()?->id ?: $request->ip());
 
-        if (RateLimiter::tooManyAttempts($key,2)) {
-            $seconds = RateLimiter::availableIn($key);
-
-            return response()->json([
-                'message' => "Слишком много запросов. Подождите {$seconds} сек. до следующего доступа."
-            ], 429);
-        }
-
-        RateLimiter::hit($key, 60);
-
-        $urls =[];
-        $urls[0] = 'google.com';
-        $urls[1] = 'yandex.ru';
-//        try {
-//            $qrCodes = $QRService->multiGenerateQR();
-//        }
-//       catch (ValidationException $exception){
-//            Log::error($exception->getMessage());
-//       }
-//       catch (\Exception $exception){
-//            Log::error($exception->getMessage());
-//       }
-
-
-
+        $limiterService->checkLimite($key, 2,60);
+        $urls= $request->input('urls');
         return $PDFService->getQrPDF($urls)->stream('12_qrcodes.pdf');
     }
 
