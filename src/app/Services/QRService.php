@@ -10,6 +10,7 @@ use Endroid\QrCode\Exception\ValidationException;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use App\Exceptions\UrlAiException;
+use Illuminate\Support\Facades\Log;
 
 class QRService
 {
@@ -28,30 +29,41 @@ class QRService
             data: $url,
             encoding: new Encoding('UTF-8'),
             errorCorrectionLevel: ErrorCorrectionLevel::Medium,
-            size: 150,
+            size: 100,
             margin: 5,
             roundBlockSizeMode: RoundBlockSizeMode::Margin,
-            labelText:'Ссылка для перехода на сайт' . $url
         );
 
         return $builder->build()->getDataUri();
     }
 
     /**
+     * @throws UrlAiException
      * @throws ValidationException
      */
     public function multiGenerateQR(array $urls):array
     {
-        $arrayReturn = [];
+        $arrayQR = [];
+        $arrayIncorrectQR = [];
         foreach ($urls as $index => $url) {
-            if (str_ends_with(strtolower($url), '.ai')) {
-                throw new UrlAiException($url);
+            if (empty($url)||!is_string($url)) {
+                continue;
             }
-            $arrayReturn[$index] = $this->getItemDTO(
-                $this->generateQR($this->generateQR($url)),
+            if (str_ends_with(strtolower($url), '.ai')) {
+                Log::channel('bad_urls')->info("Попытка генерации запрещенного URL: {$url}", [
+                    'ip' => request()->ip(),
+                    'user_id' => auth()->id() ?? 'guest'
+                ]);
+                $arrayIncorrectQR[] = $url;
+                continue;
+            }
+            $arrayQR[$index] = $this->getItemDTO(
+                $this->generateQR($url),
                 ("Запись №" . $index)
             );
         }
-        return $arrayReturn;
+        return ['codes' => $arrayQR,
+        'unCodes' => $arrayIncorrectQR
+        ];
     }
 }

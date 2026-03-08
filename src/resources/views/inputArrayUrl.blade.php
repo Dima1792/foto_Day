@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+@if(session('timeLimitation'))
+    <div>
+    <span> {{ session('message') }} Подождите  {{ session('timeLimitation')}}</span> сек.
+    </div>
+@endif
 <form action="{{ route('getQR') }}" method="POST">
     @csrf
     <div id="url-inputs">

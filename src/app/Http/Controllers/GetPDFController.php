@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\LimiteException;
 use App\Services\LimiterService;
 use App\Services\PDFService;
 use App\Services\QRService;
@@ -25,18 +26,19 @@ class GetPDFController extends Controller
     public function GetQRforLimite(Request $request,  PDFService $PDFService, LimiterService $limiterService)
     {
         $key = 'controller-access:3' . ($request->user()?->id ?: $request->ip());
-        $limiterService->checkLimite($key, 2,60);
+
         try {
-            $urls = $request->input('urls');
-        } catch (UrlAiException $exception){
-            echo 'Найден url заканчивающийся на .ai';
-            $exception->recLog();
-            return view('404');
-        }catch (\Exception) {
-            echo 'Не знаю что ты такое на тварил разбирайся сам';
-            return view('404');
+
+            $limiterService->checkLimite($key, 2, 20);
+        } catch (LimiteException $exception) {
+            return back()->with([
+                'timeLimitation' => $exception->getSeconds(),
+                'message' => "Слишком много попыток! Запрашивать QR можно не чаще чем рав минуту."
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('urlError', 'Произошла непредвиденная ошибка.');
         }
-        $PDF = $PDFService->getQrPDF($urls);
+        $PDF = $PDFService->getQrPDF($request->input('urls'));
         return $PDF->stream('12_qrcodes.pdf');
     }
 

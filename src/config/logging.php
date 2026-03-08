@@ -6,6 +6,12 @@ use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
+    'bad_urls' => [
+        'driver' => 'daily',
+        'path' => storage_path('logs/bad_urls.log'),
+        'level' => 'info',
+        'days' => 3, // Файлы старше 3 дней будут удаляться автоматически
+    ],
 
     /*
     |--------------------------------------------------------------------------

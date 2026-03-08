@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
+use App\Exceptions\LimiteException;
 use Illuminate\Support\Facades\RateLimiter;
 
 class LimiterService
@@ -11,12 +11,9 @@ class LimiterService
     {
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
-
-            throw new HttpResponseException(response()->json([
-                'message' => "Слишком много запросов. Подождите {$seconds} сек."
-            ], 429));
-
-            RateLimiter::hit($key, $decaySeconds);
+            throw new LimiteException($seconds);
         }
+        RateLimiter::hit($key);
+
     }
 }

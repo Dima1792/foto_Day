@@ -6,22 +6,14 @@ use App\Exceptions;
 
 class UrlAiException extends \Exception
 {
-    public function recLog()
+    protected $url;
+    public function __construct($url)
     {
-        file_put_contents((dirname(__DIR__).'/Logs/Aiurls.log'),
-            $this->getlog(),
-            FILE_APPEND);
+        $this->url = $url;
+        parent::__construct("Введен {$url}");
     }
-    protected function getLog():string
+    public function getUrl()
     {
-        return sprintf(
-            "Произошла ошибка в файле: %s" . PHP_EOL .
-            "Код ошибки: %s" . PHP_EOL .
-            "- %s" . PHP_EOL.
-            "- %s".PHP_EOL . PHP_EOL ,
-            $this->getFile(),
-            333,
-            $this->getMessage(),
-            date('l jS \of F Y h:i:s A'));
+        return $this->url;
     }
 }

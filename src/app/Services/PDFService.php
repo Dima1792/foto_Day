@@ -17,9 +17,10 @@ class PDFService
      */
     public function getQrPDF(array $urls):\Barryvdh\DomPDF\PDF
     {
-        $qrCodes= $this->QRService->multiGenerateQR($urls);
-
-        return Pdf::loadView('GetPDF', compact('qrCodes'));
+        $result = $this->QRService->multiGenerateQR($urls);
+        $qrCodes = $result['codes'];
+        $unCode = $result['unCodes'];
+        $count = count($qrCodes);
+        return Pdf::loadView('GetPDF', compact('qrCodes', 'count', 'unCode'));
     }
-
 }
