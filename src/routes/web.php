@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\GetPDFController;
+use App\Http\Controllers\MeetingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -12,6 +13,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/get-PDF', [ GetPDFController::class, 'generatePDF']);
+Route::get('/meeting/list',[MeetingController::class, 'list'])->name('meetingList');
+Route::get('/meeting/list',[MeetingController::class, 'list'])->name('meetingList');
 Route::get('/input-urls', function () { return view('inputArrayUrl',[]); });
 Route::middleware(['auth'])->group(function () {
     Route::get('/generate-pdf', [GetPDFController::class, 'generatePDF'])
