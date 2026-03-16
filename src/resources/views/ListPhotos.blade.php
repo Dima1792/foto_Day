@@ -8,14 +8,18 @@
     <title>Document</title>
 </head>
 <body>
-    @foreach($meetings as $meeting)
-        Событие:
-        <a href="{{route('standList',['stand'=>$meeting->name])}}">{{$meeting->name}}</a>
-        пользователя:
-            {{$meeting->user_id}}
-        относящегося к агентству:
-            {{$meeting->agency_id}}
-        <br>
+@foreach($Photos as $photo)
+    На площадке:
+    {{$photo->stand_id}}
+    у пользователя:
+    {{$photo->user_name}}
+    сделаны фото:
+    {{$photo->id}}
+    его короткие названия:
+    {{$photo->name_mini}}
+    оно сделанно:
+    {{$photo->date_last_order}}
+    <br>
 @endforeach
 </body>
 </html>

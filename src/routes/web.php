@@ -5,7 +5,8 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\GetPDFController;
 use App\Http\Controllers\MeetingController;
-
+use App\Http\Controllers\StandController;
+use App\Http\Controllers\photoController;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canRegister' => Features::enabled(Features::registration()),
@@ -14,7 +15,8 @@ Route::get('/', function () {
 
 Route::get('/get-PDF', [ GetPDFController::class, 'generatePDF']);
 Route::get('/meeting/list',[MeetingController::class, 'list'])->name('meetingList');
-Route::get('/meeting/list',[MeetingController::class, 'list'])->name('meetingList');
+Route::get('/stand/{stand}',[StandController::class, 'list'])->name('standList');
+Route::get('/photo/{stand}',[photoController::class, 'list'])->name('photoList');
 Route::get('/input-urls', function () { return view('inputArrayUrl',[]); });
 Route::middleware(['auth'])->group(function () {
     Route::get('/generate-pdf', [GetPDFController::class, 'generatePDF'])
