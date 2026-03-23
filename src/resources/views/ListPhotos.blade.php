@@ -8,18 +8,9 @@
     <title>Document</title>
 </head>
 <body>
+Фотографии для стенда №{{$Photos[0]->stand_id}} в меропиятии {{$Photos[0]->name}}:<br>
 @foreach($Photos as $photo)
-    На площадке:
-    {{$photo->stand_id}}
-    у пользователя:
-    {{$photo->user_name}}
-    сделаны фото:
-    {{$photo->id}}
-    его короткие названия:
-    {{$photo->name_mini}}
-    оно сделанно:
-    {{$photo->date_last_order}}
-    <br>
+   {{$photo->name_mini}} <br>
 @endforeach
 </body>
 </html>

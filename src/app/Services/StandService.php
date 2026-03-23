@@ -13,7 +13,6 @@ class StandService
     }
     public function getall($meetingId)
     {
-        $result =(int) Str::of($meetingId)->match('/Meeting\s+(\d+)\s+for/')->toString();
-        return $this->standsRepository->getByMeetingId($result);
+        return $this->standsRepository->getByMeetingId($meetingId);
     }
 }

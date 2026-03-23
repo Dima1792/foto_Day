@@ -8,14 +8,10 @@
     <title>Document</title>
 </head>
 <body>
+Площадки для мероприятия {{$Stands[0]->name}}:<br>
 @foreach($Stands as $stand)
-    Номер лощадки:
+    Номер площадки:
     <a href="{{route('photoList',['stand'=>$stand->id])}}">{{$stand->id}}</a>
-    имеет код : {{$stand->code}}
-    пользователя:
-    {{$stand->user_id}}
-    Статус:
-    {{$stand->status}}
     <br>
 @endforeach
 </body>

@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Repositories;
+
 use Illuminate\Database\Eloquent\Model;
+
 abstract class Repository
 
 {
+    protected const FIELD_ID = 'id';
     protected Model $model;
     abstract public function getModelClass():string;
     public function getNewModel()
@@ -26,5 +29,15 @@ abstract class Repository
        public function save(Model $model)
     {
         return $model->save();
+    }
+
+    public function getById(string $id)
+    {
+        return $this->getBuilder()->where(static::FIELD_ID, '=', $id)->first();
+    }
+
+    public function getAll()
+    {
+        return $this->getBuilder()->get();
     }
 }

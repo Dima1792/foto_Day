@@ -14,6 +14,5 @@ class LimiterService
             throw new LimiteException($seconds);
         }
         RateLimiter::hit($key);
-
     }
 }

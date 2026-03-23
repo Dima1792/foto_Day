@@ -8,13 +8,9 @@
     <title>Document</title>
 </head>
 <body>
+    Мероприятия:<br>
     @foreach($meetings as $meeting)
-        Событие:
-        <a href="{{route('standList',['stand'=>$meeting->name])}}">{{$meeting->name}}</a>
-        пользователя:
-            {{$meeting->user_id}}
-        относящегося к агентству:
-            {{$meeting->agency_id}}
+        <a href="{{route('standList',['stand'=>$meeting->id])}}">{{$meeting->name}}</a>
         <br>
 @endforeach
 </body>

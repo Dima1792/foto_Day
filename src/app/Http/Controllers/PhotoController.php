@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Services\PhotoService;
 
 
-class photoController
+class PhotoController
 {
     public function list(PhotoService $photoService, String $stand)
     {
-       return view(
+        return view(
             'ListPhotos',
             ['Photos' => $photoService->getall($stand)]
         );
