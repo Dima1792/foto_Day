@@ -21,10 +21,16 @@
     </style>
 </head>
 <body>
-<h2 style="text-align: center;">Лист QR-кодов (12 шт.)</h2>
-
+<h2 style="text-align: center;">Лист QR-кодов ({{$count}} шт.)</h2>
+@if($unCode)
+    <div>
+        @foreach($unCode as $value)
+            <span> Ошибка! Ссылка  {{$value}}  заканчивается на .ai. Такие ссылки запрещены."</span> <br>
+        @endforeach
+    </div>
+@endif
 <table class="qr-table">
-    @foreach(array_chunk($qrCodes, 3) as $row) {{-- Делим массив по 3 штуки в ряд --}}
+    @foreach(array_chunk($qrCodes, 3) as $row)
     <tr>
         @foreach($row as $qr)
             <td>

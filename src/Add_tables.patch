@@ -1,0 +1,609 @@
+Subject: [PATCH] Add tables
+---
+Index: src/database/migrations/2021_03_31_182550_create_agencies_table.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/database/migrations/2021_03_31_182550_create_agencies_table.php b/src/database/migrations/2021_03_31_182550_create_agencies_table.php
+new file mode 100644
+--- /dev/null	(date 1772818829971)
++++ b/src/database/migrations/2021_03_31_182550_create_agencies_table.php	(date 1772818829971)
+@@ -0,0 +1,35 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++class CreateAgenciesTable extends Migration
++{
++    /**
++     * Run the migrations.
++     *
++     * @return void
++     */
++    public function up()
++    {
++        Schema::create('agencies', function (Blueprint $table) {
++            $table->id();
++            $table->string('name');
++            $table->enum('type', ['to_mySelf', 'group']);
++            $table->integer('percentage')->default(0);
++            $table->string('logo')->default('');
++            $table->string('url')->default('');
++        });
++    }
++
++    /**
++     * Reverse the migrations.
++     *
++     * @return void
++     */
++    public function down()
++    {
++        Schema::dropIfExists('agencies');
++    }
++}
+Index: src/app/Http/Controllers/DataController.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/Http/Controllers/DataController.php b/src/app/Http/Controllers/DataController.php
+new file mode 100644
+--- /dev/null	(date 1772823477025)
++++ b/src/app/Http/Controllers/DataController.php	(date 1772823477025)
+@@ -0,0 +1,109 @@
++<?php
++
++namespace App\Http\Controllers;
++
++use App\Models\Agency;
++use App\Models\Meeting;
++use App\Models\Photo;
++use App\Models\Stand;
++use App\Models\User;
++use Carbon\Carbon;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Support\Facades\Hash;
++use Illuminate\Support\Str;
++
++class DataController extends Controller
++{
++    public function addData()
++    {
++        $t1 = microtime(true);
++
++        $userIds = [];
++        for ($i = 1; $i <= 5; $i++) {
++            $rand = rand(200, 100000);
++            $userIds[] = User::query()->insertGetId([
++                'name' => "User $i",
++                'email' => "user$i-$rand@example.com",
++                'password' => Hash::make('password'),
++                'created_at' => Carbon::now(),
++                'updated_at' => Carbon::now(),
++            ]);
++        }
++
++
++        // 3. Вставка Агентств (Agencies)
++        $agencyIds = [];
++        for ($i = 1; $i <= 15; $i++) {
++            $agencyIds[] = Agency::query()->insertGetId([
++                'name' => "Agency $i",
++                'type' => $i % 2 == 0 ? 'group' : 'to_myself',
++                'percentage' => rand(10, 30),
++                'logo' => "logo_$i.png",
++                'url' => "https://agency$i.com",
++            ]);
++        }
++
++        // 4. Вставка Встреч (Meetings)
++        foreach ($agencyIds as $agencyId) {
++            for ($j = 1; $j <= 5; $j++) {
++                $meetingId = Meeting::query()->insertGetId([
++                    'user_id' => $userIds[array_rand($userIds)],
++                    'agency_id' => $agencyId,
++                    'date_start' => Carbon::now()->addDays(rand(1, 10)),
++                    'date_end' => Carbon::now()->addDays(rand(11, 20)),
++                    'name' => "Meeting $j for Agency $agencyId",
++                    'link' => "https://zoom.us" . Str::random(10),
++                    'sum_default' => rand(1000, 5000),
++                ]);
++
++                // 5. Вставка Стендов (Stands) для каждой встречи
++                for ($k = 1; $k <= 2; $k++) {
++                    $standId = Stand::query()->insertGetId([
++                        'code' => Str::uuid(),
++                        'meeting_id' => $meetingId,
++                        'user_id' => $userIds[array_rand($userIds)],
++                        'status' => rand(1, 4),
++                    ]);
++
++                    // 6. Вставка Фотографий (Photos) для каждого стенда
++                    for ($p = 1; $p <= 3; $p++) {
++                        Photo::query()->insert([
++                            'stand_id' => $standId,
++                            'real_name_full' => "photo_full_$p.jpg",
++                            'user_name' => "Customer $p",
++                            'name_mini' => "photo_thumb_$p.jpg",
++                            'sum' => rand(100, 500),
++                            'sum_for_client' => rand(600, 1000),
++                            'date_last_order' => Carbon::now(),
++                            'created_at' => Carbon::now(),
++                            'updated_at' => Carbon::now(),
++                        ]);
++                    }
++                }
++            }
++        }
++
++        $result_t = microtime(true) - $t1;
++
++//        User::query()->insert([
++//            [
++//                User::FIELD_EMAIL => 'test1@ro.ru',
++//                User::FIELD_NAME => 'Пользователь',
++//                User::FIELD_PASSWORD => Hash::make('123456'),
++//            ],
++//            [
++//                User::FIELD_EMAIL => 'test2@ro.ru',
++//                User::FIELD_NAME => 'Пользователь2',
++//                User::FIELD_PASSWORD => Hash::make('123456'),
++//            ],
++//            [
++//                User::FIELD_EMAIL => 'test3@ro.ru',
++//                User::FIELD_NAME => 'Пользователь3',
++//                User::FIELD_PASSWORD => Hash::make('123456'),
++//            ],
++//        ]);
++
++
++        return 'ok ' . $result_t;
++    }
++}
+Index: src/database/migrations/2021_03_31_183100_create_photos_table.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/database/migrations/2021_03_31_183100_create_photos_table.php b/src/database/migrations/2021_03_31_183100_create_photos_table.php
+new file mode 100644
+--- /dev/null	(date 1772818829999)
++++ b/src/database/migrations/2021_03_31_183100_create_photos_table.php	(date 1772818829999)
+@@ -0,0 +1,40 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++class CreatePhotosTable extends Migration
++{
++    /**
++     * Run the migrations.
++     *
++     * @return void
++     */
++    public function up()
++    {
++        Schema::create('photos', function (Blueprint $table) {
++            $table->id();
++            $table->bigInteger('stand_id');
++            $table->timestamps();
++            $table->string('real_name_full');
++            $table->string('user_name');
++            $table->string('name_mini');
++            $table->bigInteger('sum');
++            $table->bigInteger('sum_for_client');
++            $table->dateTime('date_last_order');
++
++            $table->index('name_mini');
++        });
++    }
++
++    /**
++     * Reverse the migrations.
++     *
++     * @return void
++     */
++    public function down()
++    {
++        Schema::dropIfExists('photos');
++    }
++}
+Index: src/database/migrations/2021_03_31_182338_create_meetings_table.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/database/migrations/2021_03_31_182338_create_meetings_table.php b/src/database/migrations/2021_03_31_182338_create_meetings_table.php
+new file mode 100644
+--- /dev/null	(date 1772819927549)
++++ b/src/database/migrations/2021_03_31_182338_create_meetings_table.php	(date 1772819927549)
+@@ -0,0 +1,39 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++class CreateMeetingsTable extends Migration
++{
++    /**
++     * Run the migrations.
++     *
++     * @return void
++     */
++    public function up(): void
++    {
++        Schema::create('meetings', function (Blueprint $table) {
++            $table->id();
++            $table->bigInteger('user_id');
++            $table->bigInteger('agency_id');
++            $table->dateTime('date_start');
++            $table->dateTime('date_end');
++            $table->string('name');
++            $table->string('link');
++            $table->string('sum_default');
++
++            $table->index(['user_id', 'agency_id']);
++        });
++    }
++
++    /**
++     * Reverse the migrations.
++     *
++     * @return void
++     */
++    public function down(): void
++    {
++        Schema::dropIfExists('meetings');
++    }
++}
+Index: src/database/migrations/2021_07_23_171741_create_stands_table.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/database/migrations/2021_07_23_171741_create_stands_table.php b/src/database/migrations/2021_07_23_171741_create_stands_table.php
+new file mode 100644
+--- /dev/null	(date 1772818830011)
++++ b/src/database/migrations/2021_07_23_171741_create_stands_table.php	(date 1772818830011)
+@@ -0,0 +1,35 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++class CreateStandsTable extends Migration
++{
++    /**
++     * Run the migrations.
++     *
++     * @return void
++     */
++    public function up()
++    {
++        Schema::create('stands', function (Blueprint $table) {
++            $table->id();
++            $table->string('code', 36);
++            $table->bigInteger('meeting_id');
++            $table->bigInteger('user_id');
++            $table->tinyInteger('status')->default(0);
++            $table->index('code');
++        });
++    }
++
++    /**
++     * Reverse the migrations.
++     *
++     * @return void
++     */
++    public function down()
++    {
++        Schema::dropIfExists('stands');
++    }
++}
+Index: src/database/migrations/2021_03_31_182649_create_user_groups_table.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/database/migrations/2021_03_31_182649_create_user_groups_table.php b/src/database/migrations/2021_03_31_182649_create_user_groups_table.php
+new file mode 100644
+--- /dev/null	(date 1772820861932)
++++ b/src/database/migrations/2021_03_31_182649_create_user_groups_table.php	(date 1772820861932)
+@@ -0,0 +1,36 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++class CreateUserGroupsTable extends Migration
++{
++    /**
++     * Run the migrations.
++     *
++     * @return void
++     */
++    public function up()
++    {
++        Schema::create('user_groups', function (Blueprint $table) {
++            $table->id();
++            $table->bigInteger('user_id');
++            $table->bigInteger('agency_id');
++            $table->boolean('is_main');
++            $table->boolean('is_active');
++
++            $table->index(['user_id', 'agency_id']);
++        });
++    }
++
++    /**
++     * Reverse the migrations.
++     *
++     * @return void
++     */
++    public function down()
++    {
++        Schema::dropIfExists('user_groups');
++    }
++}
+Index: src/app/Models/User.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/Models/User.php b/src/app/Models/User.php
+--- a/src/app/Models/User.php	(revision 12ee2b2fcae616049e4efcaebbed0d0be7a13698)
++++ b/src/app/Models/User.php	(date 1772822136339)
+@@ -13,6 +13,12 @@
+     /** @use HasFactory<\Database\Factories\UserFactory> */
+     use HasFactory, Notifiable, TwoFactorAuthenticatable;
+ 
++    const FIELD_ID = 'id';
++    const FIELD_NAME = 'name';
++    const FIELD_EMAIL = 'email';
++    const FIELD_PASSWORD = 'password';
++
++
+     /**
+      * The attributes that are mass assignable.
+      *
+Index: src/app/Models/Photo.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/Models/Photo.php b/src/app/Models/Photo.php
+new file mode 100644
+--- /dev/null	(date 1772821797619)
++++ b/src/app/Models/Photo.php	(date 1772821797619)
+@@ -0,0 +1,42 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Factories\HasFactory;
++use Illuminate\Database\Eloquent\Model;
++
++/**
++ * Class Photo
++ *
++ * @property $id
++ * @property $stand_id
++ * @property $created_at
++ * @property $updated_at
++ * @property $user_name
++ * @property $name_mini
++ * @property $name_full
++ * @property $date_last_order
++ */
++class Photo extends Model
++{
++    const FIELD_ID = 'id';
++    const FIELD_STAND_ID = 'stand_id';
++    const FIELD_CREATED_AT = 'created_at';
++    const FIELD_UPDATED_AT = 'updated_at';
++    const FIELD_USER_NAME = 'user_name';
++    const FIELD_NAME_MINI = 'name_mini';
++    const FIELD_NAME_FULL = 'name_full';
++    const FIELD_SUM = 'sum';
++    const FIELD_DATE_LAST_ORDER = 'date_last_order';
++
++    const TABLE_NAME = 'photos';
++
++    const DEFAULT_DATE = '1990-06-14 00:00:00';
++
++    protected $table = self::TABLE_NAME;
++
++    public function getRouteKeyName()
++    {
++        return 'name_mini';
++    }
++}
+Index: src/app/Models/Agency.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/Models/Agency.php b/src/app/Models/Agency.php
+new file mode 100644
+--- /dev/null	(date 1772822279771)
++++ b/src/app/Models/Agency.php	(date 1772822279771)
+@@ -0,0 +1,48 @@
++<?php
++
++namespace App\Models;
++
++
++
++use Illuminate\Database\Eloquent\Factories\HasFactory;
++use Illuminate\Database\Eloquent\Model;
++
++/**
++ * Class Agency
++ * @package App\Models
++ *
++ * @property $id
++ * @property $name
++ * @property $type [to_mySelf|group]
++ * @property $percentage
++ * @property $logo
++ * @property $url Домен
++ * @property $tel
++ * @property $inn
++ *
++ */
++class Agency extends Model
++{
++    const FIELD_ID = 'id';
++    const FIELD_NAME = 'name';
++    const FIELD_TYPE = 'type';
++    const FIELD_PERCENTAGE = 'percentage';
++    const FIELD_LOGO = 'logo';
++    const FIELD_URL = 'url';
++    const FIELD_TEL = 'tel';
++    const FIELD_INN = 'inn';
++
++    const TABLE_NAME = 'agencies';
++
++    const TYPE_TO_MYSELF = 'to_mySelf';
++    const TYPE_GROUP = 'group';
++
++    const TYPES = [
++        self::TYPE_TO_MYSELF,
++        self::TYPE_GROUP,
++    ];
++
++    public $timestamps = false;
++
++    protected $table = self::TABLE_NAME;
++}
+Index: src/app/Models/Meeting.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/Models/Meeting.php b/src/app/Models/Meeting.php
+new file mode 100644
+--- /dev/null	(date 1772821797607)
++++ b/src/app/Models/Meeting.php	(date 1772821797607)
+@@ -0,0 +1,38 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Factories\HasFactory;
++use Illuminate\Database\Eloquent\Model;
++
++/**
++ * Class Meeting
++ * @package App\Models
++ *
++ * @property $id
++ * @property $user_id
++ * @property $agency_id
++ * @property $date_start
++ * @property $date_end
++ * @property $name
++ * @property $link
++ * @property $sum_default
++ * @property $first_date_activate
++ */
++class Meeting extends Model
++{
++    const FIELD_ID = 'id';
++    const FIELD_USER_ID = 'user_id';
++    const FIELD_AGENCY_ID = 'agency_id';
++    const FIELD_DATE_START = 'date_start';
++    const FIELD_DATE_END = 'date_end';
++    const FIELD_NAME = 'name';
++    const FIELD_LINK = 'link';
++    const FIELD_SUM_DEFAULT = 'sum_default';
++    const FIELD_FIRST_DATE_ACTIVATE = 'first_date_activate';
++
++    const TABLE_NAME = 'meetings';
++
++    protected $table = self::TABLE_NAME;
++    public $timestamps = false;
++}
+Index: src/routes/web.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/routes/web.php b/src/routes/web.php
+--- a/src/routes/web.php	(revision 12ee2b2fcae616049e4efcaebbed0d0be7a13698)
++++ b/src/routes/web.php	(date 1772822136315)
+@@ -4,6 +4,7 @@
+ use Inertia\Inertia;
+ use Laravel\Fortify\Features;
+ use App\Http\Controllers\User\GraphController;
++use App\Http\Controllers\DataController;
+ 
+ Route::get('/', function () {
+     return Inertia::render('Welcome', [
+@@ -17,4 +18,7 @@
+ Route::post('upload/csv', [GraphController::class, 'uploadCsv'])->middleware(['auth', 'verified'])->name('uploadCsv');
+ 
+ 
++Route::get('add-data', [DataController::class, 'addData']);
++
++
+ require __DIR__.'/settings.php';
+Index: src/app/Models/Stand.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/Models/Stand.php b/src/app/Models/Stand.php
+new file mode 100644
+--- /dev/null	(date 1772821797587)
++++ b/src/app/Models/Stand.php	(date 1772821797587)
+@@ -0,0 +1,40 @@
++<?php
++
++namespace App\Models;
++
++use Illuminate\Database\Eloquent\Factories\HasFactory;
++use Illuminate\Database\Eloquent\Model;
++
++/**
++ * Class Stand
++ * @package App\Models
++ *
++ * @property integer id
++ * @property string code
++ * @property integer meeting_id
++ * @property integer user_id
++ * @property integer status
++ * @property string info
++ *
++ *
++ */
++class Stand extends Model
++{
++    public $timestamps = false;
++
++    const FIELD_ID = 'id';
++    const FIELD_CODE = 'code';
++    const FIELD_MEETING_ID = 'meeting_id';
++    const FIELD_USER_ID = 'user_id';
++    const FIELD_STATUS = 'status';
++    const FIELD_INFO = 'info';
++
++    const TABLE_NAME = 'stands';
++
++    protected $table = self::TABLE_NAME;
++
++    public function getRouteKeyName()
++    {
++        return 'code';
++    }
++}

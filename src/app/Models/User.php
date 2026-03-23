@@ -13,6 +13,12 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
+    const FIELD_ID = 'id';
+    const FIELD_NAME = 'name';
+    const FIELD_EMAIL = 'email';
+    const FIELD_PASSWORD = 'password';
+
+
     /**
      * The attributes that are mass assignable.
      *
