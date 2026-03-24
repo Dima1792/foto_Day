@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Stand;
 use App\Repositories\StandsRepository;
-use Illuminate\Support\Str;
 
 class StandService
 {
@@ -14,5 +14,9 @@ class StandService
     public function getall($meetingId)
     {
         return $this->standsRepository->getByMeetingId($meetingId);
+    }
+    public function save(Stand $stand)
+    {
+        $this->standsRepository->save($stand);
     }
 }

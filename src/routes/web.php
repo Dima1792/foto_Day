@@ -15,8 +15,12 @@ Route::get('/', function () {
 
 Route::get('/get-PDF', [ GetPDFController::class, 'generatePDF']);
 Route::get('/meeting/list',[MeetingController::class, 'list'])->name('meetingList');
-Route::get('/stand/{stand}',[StandController::class, 'list'])->name('standList');
-Route::get('/photo/{stand}',[PhotoController::class, 'list'])->name('photoList');
+Route::get('/meeting/create', [MeetingController::class, 'create'])->name('meeting.create');
+Route::post('/meetings', [MeetingController::class, 'store'])->name('meetings.store');
+Route::get('/stand/create', [StandController::class, 'create'])->name('stand.create');
+Route::post('/stands', [StandController::class, 'store'])->name('stands.store');
+Route::get('/stand/{stand?}',[StandController::class, 'list'])->name('standList');
+Route::get('/photo/{stand?}',[PhotoController::class, 'list'])->name('photoList');
 Route::get('/input-urls', function () { return view('inputArrayUrl',[]); });
 Route::middleware(['auth'])->group(function () {
     Route::get('/generate-pdf', [GetPDFController::class, 'generatePDF'])

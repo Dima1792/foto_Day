@@ -10,7 +10,7 @@
 <body>
 Фотографии для стенда №{{$Photos[0]->stand_id}} в меропиятии {{$Photos[0]->name}}:<br>
 @foreach($Photos as $photo)
-   {{$photo->name_mini}} <br>
+   {{$photo->name_mini}} {{$photo->stand_id}}<br>
 @endforeach
 </body>
 </html>

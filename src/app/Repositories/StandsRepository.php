@@ -12,6 +12,11 @@ class StandsRepository extends Repository
     {
         return Stand::class;
     }
+    public function getNewModel()
+    {
+        $modelClass = $this->getModelClass();
+        return new $modelClass;
+    }
     public function getByMeetingId(string $meetingId)
     {
         return $this->getBuilder()

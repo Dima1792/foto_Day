@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Meeting;
 use App\Repositories\MeetingRepository;
 
 class MeetingServices
@@ -13,5 +14,9 @@ class MeetingServices
     public function getall()
     {
         return $this->meetingRepository->getAll();
+    }
+    public function save(Meeting $meeting)
+    {
+        $this->meetingRepository->save($meeting);
     }
 }

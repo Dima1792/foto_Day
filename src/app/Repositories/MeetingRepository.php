@@ -10,6 +10,11 @@ use App\Models\Meeting;
  */
 class MeetingRepository extends Repository
 {
+    public function getNewModel()
+    {
+        $modelClass = $this->getModelClass();
+        return new $modelClass;
+    }
     public function getModelClass():string
     {
         return Meeting::class;
