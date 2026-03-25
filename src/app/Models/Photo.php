@@ -25,7 +25,7 @@ class Photo extends Model
     const FIELD_UPDATED_AT = 'updated_at';
     const FIELD_USER_NAME = 'user_name';
     const FIELD_NAME_MINI = 'name_mini';
-    const FIELD_NAME_FULL = 'name_full';
+    const FIELD_NAME_FULL = 'real_name_full';
     const FIELD_SUM = 'sum';
     const FIELD_DATE_LAST_ORDER = 'date_last_order';
 

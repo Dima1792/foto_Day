@@ -20,6 +20,7 @@ class PhotesRepository extends Repository
                              'p.'.Photo::FIELD_USER_NAME,
                              's.'.Stand::FIELD_ID,
                              'm.'.Meeting::FIELD_NAME,
+                'p.'.Photo::FIELD_NAME_FULL,
                              'p.'.Photo::FIELD_NAME_MINI,
                              'p.'.Photo::FIELD_DATE_LAST_ORDER)
             ->leftJoin(Stand::TABLE_NAME.' As s',
