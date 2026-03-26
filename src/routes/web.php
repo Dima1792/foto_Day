@@ -22,7 +22,7 @@ Route::post('/stands', [StandController::class, 'store'])->name('stands.store');
 Route::get('/stand/{stand?}',[StandController::class, 'list'])->name('standList');
 Route::get('/photo/load', [PhotoController::class, 'loader'])->name('loadPhoto');
 Route::post('/photos', [PhotoController::class, 'store'])->name('photo.store');
-Route::get('/photo/{photo}', [PhotoController::class, 'list'])->name('photoList');
+Route::get('/photo/{photo}', [PhotoController::class, 'listPhotosForUser'])->name('photoList');
 Route::get('/input-urls', function () { return view('inputArrayUrl',[]); });
 Route::middleware(['auth'])->group(function () {
     Route::get('/generate-pdf', [GetPDFController::class, 'generatePDF'])

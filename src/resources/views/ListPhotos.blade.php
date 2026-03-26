@@ -2,9 +2,8 @@
 
 @section('title', 'Фотографии площадки')
 
-{{-- Кнопка в шапке сайта --}}
 @push('actions')
-    <a href="{{ route('loadPhoto', ['photo' => request()->route('photo')]) }}" class="btn-ui btn-ui-save">
+    <a href="{{ route('loadPhoto', ['stand_id' => request()->route('photo')]) }}" class="btn-ui btn-ui-save">
         + Добавить фото
     </a>
 @endpush
@@ -30,8 +29,6 @@
                target="_blank"
                class="item-card"
                style="padding: 0; overflow: hidden; display: flex; flex-direction: column; text-decoration: none;">
-
-                {{-- Контейнер для картинки с фиксированной высотой --}}
                 <div style="width: 100%; height: 220px; background: #f8fafc; overflow: hidden;">
                     <img src="{{ asset('storage/' . $photo->real_name_full) }}"
                          alt="{{ $photo->name_mini }}"

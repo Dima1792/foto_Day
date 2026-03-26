@@ -119,7 +119,6 @@ body {
     font-size: 1rem;
     transition: 0.2s;
 }
-/* Сетка для фотографий */
 .photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -127,7 +126,6 @@ body {
     margin-top: 2rem;
 }
 
-/* Контейнер одного фото */
 .photo-card {
     position: relative;
     aspect-ratio: 1 / 1; /* Делаем фото квадратными */
