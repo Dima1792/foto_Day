@@ -22,12 +22,12 @@ class PhotoController extends Controller
         $Photos = $photoService->PhotosForUser($standId, Auth::id());
         return view('ListPhotos', [
             'Photos' => $Photos,
-            'standId' => $standId
+            'standId' => $standId,
+            'link' => route('loadPhoto', ['standId' => $standId])
         ]);
     }
-    public function loader(Request $request)
+    public function loader($standId)
     {
-        $standId = $request->query('stand_id');
         if (!$standId) {
             return redirect()->back()->with('error', 'ID стенда не передан');
         }
@@ -39,7 +39,7 @@ class PhotoController extends Controller
             $file = $request->file('image');
             $photoService->save($request->stand_id, $file->store('photos', 'public'));
 
-            return redirect()->route('photoList', ['photo' => $request->stand_id]);
+            return redirect()->route('photoList', ['standId' => $request->stand_id]);
         }
     }
 }

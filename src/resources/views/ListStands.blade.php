@@ -16,7 +16,7 @@
 
     <div class="cards-grid">
         @forelse($Stands->whereNotNull('id') as $stand)
-            <a href="{{ route('photoList', ['photo' => $stand->id]) }}" class="item-card">
+            <a href="{{ route('photoList', ['standId' => $stand->id]) }}" class="item-card">
                 <div class="item-card-title">Площадка №{{ $stand->id }}</div>
             </a>
         @empty

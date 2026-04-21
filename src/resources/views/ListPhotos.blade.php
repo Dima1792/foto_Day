@@ -3,7 +3,7 @@
 @section('title', 'Фотографии площадки')
 
 @push('actions')
-    <a href="{{ route('loadPhoto', ['stand_id' => request()->route('photo')]) }}" class="btn-ui btn-ui-save">
+    <a href="{{$link}}" class="btn-ui btn-ui-save">
         + Добавить фото
     </a>
 @endpush

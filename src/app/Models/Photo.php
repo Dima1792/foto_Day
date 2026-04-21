@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property $user_name
  * @property $name_mini
  * @property $name_full
+ * @property $real_name_full
+ * @property $sum
+ * @property $sum_for_client
  * @property $date_last_order
  */
 class Photo extends Model

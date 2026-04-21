@@ -8,8 +8,6 @@
             <h1 class="title-main">Добавить фотографию</h1>
             <p class="subtitle">Площадка №{{ $standId }}</p>
         </div>
-
-        {{-- ВАЖНО: enctype="multipart/form-data" обязателен для загрузки файлов! --}}
         <form action="{{ route('photo.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @if ($errors->any())
@@ -36,7 +34,7 @@
             </div>
 
             <div class="actions-bar">
-                <a href="{{ route('photoList', ['photo' => $standId]) }}" class="btn-ui btn-ui-cancel">Отмена</a>
+                <a href="{{ route('photoList', ['standId' => $standId]) }}" class="btn-ui btn-ui-cancel">Отмена</a>
                 <button type="submit" class="btn-ui btn-ui-save">Загрузить на сервер</button>
             </div>
         </form>
